@@ -1,6 +1,5 @@
 package com.example.backend.talent.service;
 
-import com.example.backend.Exporter.UserRepositoryExporter;
 import com.example.backend.jwt.JwtTokenProvider;
 import com.example.backend.mapper.TalentMapper;
 import com.example.backend.pagination.PageWithMetadata;
@@ -43,7 +42,6 @@ public class TalentService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserRepositoryExporter userRepositoryExporter;
 
     public PageWithMetadata<TalentGeneralInfo> getAllTalents(int page, int size){
         try {
