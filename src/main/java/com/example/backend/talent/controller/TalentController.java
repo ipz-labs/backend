@@ -22,31 +22,30 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1/talents")
 public class TalentController {
     private final TalentService talentService;
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public PageWithMetadata<TalentGeneralInfo> getAllTalents(@RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "9") int size){
         return talentService.getAllTalents(page, size);
     }
-
+    @GetMapping("/export")
+    public ResponseEntity<String> exportUsersToFile() {
+        talentService.exportUsersToFile();
+        return ResponseEntity.ok("Users exported successfully.");
+    }
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TalentProfile getTalentProfile(@PathVariable Long id){
-        return talentService.getTalentProfileById(id);
-    }
+    public TalentProfile getTalentProfile(@PathVariable Long id){return talentService.getTalentProfileById(id);}
 
     @PostMapping
     public ResponseEntity<?> registerTalent(@Valid @RequestBody TalentRegistration talent){
         var response = talentService.addTalent(talent);
-
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody TalentLogin loginRequest){
         var response = talentService.login(loginRequest);
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -61,8 +60,4 @@ public class TalentController {
         talentService.deleteTalent(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
-
-
 }
