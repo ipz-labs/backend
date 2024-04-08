@@ -1,5 +1,6 @@
 package com.example.backend.talent.service;
 
+import com.example.backend.Exporter.UserRepositoryExporter;
 import com.example.backend.jwt.JwtTokenProvider;
 import com.example.backend.mapper.TalentMapper;
 import com.example.backend.pagination.PageWithMetadata;
@@ -16,8 +17,9 @@ import com.example.backend.talent.model.response.TalentGeneralInfo;
 import com.example.backend.talent.model.response.TalentOwnProfile;
 import com.example.backend.talent.model.response.TalentProfile;
 import com.example.backend.talent.repository.TalentRepository;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.*;
 
 @Service
@@ -40,9 +43,14 @@ public class TalentService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-
+    private final UserRepositoryExporter userRepositoryExporter;
 
     public PageWithMetadata<TalentGeneralInfo> getAllTalents(int page, int size){
+        try {
+            Thread.sleep(200); // Приклад: сервер спить на 2 мілісекунд
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Page<Talent> talentPage = talentRepository.findAllByOrderByIdDesc(PageRequest.of(page, size));
         List<TalentGeneralInfo> talentGeneralInfos = talentMapper.toTalentGeneralInfos(talentPage.getContent());
         return new PageWithMetadata<>(talentGeneralInfos, talentPage.getTotalPages());
@@ -153,6 +161,19 @@ public class TalentService {
         metadata.put("Content-Type", file.getContentType());
         metadata.put("Content-Length", String.valueOf(file.getSize()));
         return metadata;
+    }
+    public void exportUsersToFile() {
+        List<Talent> users = talentRepository.findAll();
+        String desktopPath = System.getProperty("user.home") + "/Desktop";
+        String filePath = desktopPath + "/users.xml";
+        try {
+            XmlMapper xmlMapper = new XmlMapper();
+            xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            xmlMapper.writeValue(new File(filePath), users);
+            System.out.println("Users exported to XML file successfully.");
+        } catch (Exception e) {
+            System.err.println("Error exporting users to XML file: " + e.getMessage());
+        }
     }
 
 }
