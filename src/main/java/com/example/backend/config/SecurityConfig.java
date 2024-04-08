@@ -45,6 +45,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers(GET, "/api/v1/talents").permitAll()
                         .requestMatchers(POST, "/api/v1/talents", "/api/v1/talents/login").permitAll()
+                        .requestMatchers("/api-documentation/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
