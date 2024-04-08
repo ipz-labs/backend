@@ -1,9 +1,11 @@
 package com.example.backend.talent.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -15,7 +17,7 @@ import static jakarta.persistence.FetchType.EAGER;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Talent {
+public class Talent implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
@@ -28,6 +30,7 @@ public class Talent {
     private String location;
     private String email;
     private String password;
+    @JsonIgnore
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
